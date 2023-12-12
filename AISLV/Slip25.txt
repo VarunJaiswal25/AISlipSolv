@@ -1,0 +1,136 @@
+Q.1). Build a bot which provides all the information related to you in college 
+
+
+
+class CollegeBot:
+    def __init__(self):
+        self.college_info = {
+            "name": "My College",
+            "location": "City, Country",
+            "major": "Computer Science",
+            "year": "Senior",
+            "activities": ["Programming Club", "Student Council"],
+            "courses": ["Artificial Intelligence", "Data Structures", "Web Development"],
+            "favorite_spot": "Library",
+            "contact_hours": "Monday to Friday, 9 AM to 5 PM"
+        }
+
+    def get_info(self, query):
+        if query.lower() == 'all':
+            return self.college_info
+        elif query.lower() in self.college_info:
+            return {query: self.college_info[query.lower()]}
+        else:
+            return {"response": "I don't have information on that topic."}
+
+if __name__ == "__main__":
+    college_bot = CollegeBot()
+
+    print("College Bot: Hello! I'm your college information bot.")
+    print("College Bot: You can ask me about my college, major, activities, courses, favorite spot, and contact hours.")
+
+    while True:
+        user_query = input("You: ")
+
+        if user_query.lower() == 'exit':
+            print("College Bot: Goodbye!")
+            break
+
+        response = college_bot.get_info(user_query)
+        print("College Bot:", response)
+
+
+
+Q.2) Write a Python program to solve 8-puzzle problem. 
+
+
+import heapq
+import numpy as np
+
+class PuzzleNode:
+    def __init__(self, state, parent=None, action=None, cost=0, heuristic=0):
+        self.state = state
+        self.parent = parent
+        self.action = action
+        self.cost = cost
+        self.heuristic = heuristic
+
+    def __lt__(self, other):
+        return (self.cost + self.heuristic) < (other.cost + other.heuristic)
+
+    def __eq__(self, other):
+        return np.array_equal(self.state, other.state)
+
+def get_blank_position(state):
+    return np.argwhere(state == 0)[0]
+
+def get_neighbors(state):
+    blank_position = get_blank_position(state)
+    neighbors = []
+
+    for move in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
+        new_position = blank_position + move
+
+        if 0 <= new_position[0] < 3 and 0 <= new_position[1] < 3:
+            new_state = state.copy()
+            new_state[blank_position[0], blank_position[1]] = state[new_position[0], new_position[1]]
+            new_state[new_position[0], new_position[1]] = 0
+            neighbors.append(new_state)
+
+    return neighbors
+
+def manhattan_distance(state, goal):
+    distance = 0
+
+    for i in range(1, 9):
+        current_position = np.argwhere(state == i)[0]
+        goal_position = np.argwhere(goal == i)[0]
+        distance += abs(current_position[0] - goal_position[0]) + abs(current_position[1] - goal_position[1])
+
+    return distance
+
+def a_star(initial_state, goal_state):
+    initial_node = PuzzleNode(initial_state, None, None, 0, manhattan_distance(initial_state, goal_state))
+    priority_queue = [initial_node]
+    explored_set = set()
+
+    while priority_queue:
+        current_node = heapq.heappop(priority_queue)
+
+        if np.array_equal(current_node.state, goal_state):
+            return get_solution(current_node)
+
+        explored_set.add(tuple(map(tuple, current_node.state)))
+
+        for neighbor_state in get_neighbors(current_node.state):
+            if tuple(map(tuple, neighbor_state)) not in explored_set:
+                neighbor_node = PuzzleNode(
+                    neighbor_state,
+                    current_node,
+                    neighbor_state[current_node.state == 0],
+                    current_node.cost + 1,
+                    manhattan_distance(neighbor_state, goal_state)
+                )
+                heapq.heappush(priority_queue, neighbor_node)
+
+    return None
+
+def get_solution(node):
+    solution = []
+    while node.parent is not None:
+        solution.insert(0, node.action)
+        node = node.parent
+    return solution
+
+if __name__ == "__main__":
+    initial_state = np.array([[1, 2, 3], [4, 0, 6], [7, 5, 8]])
+    goal_state = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 0]])
+
+    solution = a_star(initial_state, goal_state)
+
+    if solution:
+        print("Solution found:")
+        for step, move in enumerate(solution):
+            print(f"Step {step + 1}: Move {move}")
+    else:
+        print("No solution found.")

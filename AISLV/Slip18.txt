@@ -1,0 +1,120 @@
+Q.1).Write a python program to remove stop words for a given passage from a text file using 
+NLTK?
+
+
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+
+nltk.download('stopwords')
+nltk.download('punkt')
+
+def remove_stopwords(input_file, output_file):
+    # Read the content from the input file
+    with open(input_file, 'r') as file:
+        passage = file.read()
+
+    # Tokenize the passage into words
+    words = word_tokenize(passage)
+
+    # Remove stop words
+    stop_words = set(stopwords.words('english'))
+    filtered_words = [word for word in words if word.lower() not in stop_words]
+
+    # Write the filtered content to the output file
+    with open(output_file, 'w') as file:
+        file.write(' '.join(filtered_words))
+
+if __name__ == "__main__":
+    input_file = "input.txt"  # Replace with your input file path
+    output_file = "output.txt"  # Replace with your output file path
+
+    remove_stopwords(input_file, output_file)
+
+    print(f"Stop words removed and saved to '{output_file}'.")
+
+
+
+
+Q.2) Implement a system that performs arrangement of some set of objects in a room. Assume that 
+you have only 5 rectangular, 4 square-shaped objects. Use A* approach for the placement of 
+the objects in room for efficient space utilisation. Assume suitable heuristic, and dimensions of 
+objects and rooms. (Informed Search) 
+
+
+import heapq
+import copy
+
+class State:
+    def __init__(self, room, objects):
+        self.room = room
+        self.objects = objects
+
+    def __lt__(self, other):
+        return self.heuristic() < other.heuristic()
+
+    def heuristic(self):
+        # Calculate heuristic based on remaining empty space in the room
+        total_empty_space = sum(row.count(0) for row in self.room)
+        return total_empty_space
+
+def a_star_search(initial_state):
+    priority_queue = []
+    heapq.heappush(priority_queue, initial_state)
+
+    while priority_queue:
+        current_state = heapq.heappop(priority_queue)
+
+        # Check if the goal state is reached
+        if len(current_state.objects) == 0:
+            return current_state
+
+        # Generate successor states by placing objects
+        for obj in current_state.objects:
+            for i in range(len(current_state.room)):
+                for j in range(len(current_state.room[0])):
+                    new_state = copy.deepcopy(current_state)
+                    if can_place_object(new_state.room, obj, i, j):
+                        place_object(new_state.room, obj, i, j)
+                        new_state.objects.remove(obj)
+                        heapq.heappush(priority_queue, new_state)
+
+    return None
+
+def can_place_object(room, obj, i, j):
+    # Check if the object can be placed in the room at the specified position
+    for x in range(i, i + obj[0]):
+        for y in range(j, j + obj[1]):
+            if x >= len(room) or y >= len(room[0]) or room[x][y] != 0:
+                return False
+    return True
+
+def place_object(room, obj, i, j):
+    # Place the object in the room at the specified position
+    for x in range(i, i + obj[0]):
+        for y in range(j, j + obj[1]):
+            room[x][y] = 1  # Assuming 1 represents an occupied space
+
+if __name__ == "__main__":
+    # Example dimensions (length x width) in meters
+    room_dimensions = (5, 5)
+    rectangular_objects = [(2, 1), (3, 1), (2, 2), (4, 2), (5, 3)]
+    square_objects = [(1, 1), (2, 2), (1, 2), (3, 3)]
+
+    # Initialize the room with zeros (0 represents an empty space)
+    initial_room = [[0] * room_dimensions[1] for _ in range(room_dimensions[0])]
+
+    # Create the initial state
+    initial_state = State(initial_room, rectangular_objects + square_objects)
+
+    # Perform A* search
+    final_state = a_star_search(initial_state)
+
+    if final_state:
+        print("Objects placed successfully!")
+        print("Final Room Configuration:")
+        for row in final_state.room:
+            print(row)
+    else:
+        print("Failed to place all objects.")
+

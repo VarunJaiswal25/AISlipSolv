@@ -1,0 +1,61 @@
+Q.1)Write a python program to sort the sentence in alphabetical order?
+
+
+
+def sort_sentence(sentence):
+    words = sentence.split()
+    sorted_words = sorted(words)
+    sorted_sentence = ' '.join(sorted_words)
+    return sorted_sentence
+
+if __name__ == "__main__":
+    input_sentence = input("Enter a sentence: ")
+    result = sort_sentence(input_sentence)
+    print("Sorted Sentence:", result)
+
+
+
+
+
+Q.2) Write a Python program for the following Cryptorithmetic problems
+CROSS+ROADS = DANGER
+
+
+from itertools import permutations
+
+def solve_cryptoarithmetic(problem):
+    letters = set(char for word in problem for char in word)
+    if len(letters) > 10:
+        print("Invalid problem: Too many unique letters.")
+        return
+
+    for perm in permutations(range(10), len(letters)):
+        assignment = dict(zip(letters, perm))
+        if is_solution(problem, assignment):
+            print("Solution found:")
+            print_assignment(assignment, problem)
+            return
+
+    print("No solution found.")
+
+def is_solution(problem, assignment):
+    # Evaluate the expression with the given assignment
+    try:
+        cross_value = sum(assignment[char] * (10 ** (len(word) - index - 1)) for index, char in enumerate(problem[0][::-1]))
+        roads_value = sum(assignment[char] * (10 ** (len(word) - index - 1)) for index, char in enumerate(problem[1][::-1]))
+        danger_value = sum(assignment[char] * (10 ** (len(word) - index - 1)) for index, char in enumerate(problem[2][::-1]))
+        return cross_value + roads_value == danger_value
+    except KeyError:
+        return False
+
+def print_assignment(assignment, problem):
+    for word in problem:
+        print(" + ".join(str(assignment[char]) for char in word[::-1]), end=" ")
+        print("= " + str(sum(assignment[char] * (10 ** (len(word) - index - 1)) for index, char in enumerate(word[::-1]))))
+
+if __name__ == "__main__":
+    problem = ["CROSS", "ROADS", "DANGER"]
+    solve_cryptoarithmetic(problem)
+
+
+

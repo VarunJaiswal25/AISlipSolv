@@ -1,0 +1,92 @@
+Q.1) Write a python program using mean end analysis algorithmproblem of transforming a string of lowercase letters into another string.
+
+
+
+def mean_end_analysis(start_str, goal_str):
+    start_len = len(start_str)
+    goal_len = len(goal_str)
+
+    if start_len != goal_len:
+        print("Invalid input: Lengths of start and goal strings must be the same.")
+        return None
+
+    operations = []
+
+    for i in range(start_len):
+        if start_str[i] != goal_str[i]:
+            common_suffix = start_str[i + 1:] if i < start_len - 1 else ""
+            common_prefix = start_str[:i] if i > 0 else ""
+            start_str = common_prefix + goal_str[i] + common_suffix
+            operations.append(f"Replace character at index {i} with '{goal_str[i]}'")
+
+    return operations
+
+if __name__ == "__main__":
+    start_string = input("Enter the start string (lowercase letters only): ")
+    goal_string = input("Enter the goal string (lowercase letters only): ")
+
+    result = mean_end_analysis(start_string, goal_string)
+
+    if result is not None:
+        print("\nOperations to transform the start string to the goal string:")
+        for operation in result:
+            print(operation)
+
+
+Q.2) Write a Python program to solve water jug problem. Two jugs with capacity 4 gallon and 3 
+gallon are given with unlimited water supply respectively. The target is to achieve 2 gallon of 
+water in second jug.
+
+
+def water_jug_dfs(current_state, visited_states):
+    jug4, jug3 = current_state
+
+    if jug4 == 0 and jug3 == 2:
+        return [current_state]
+
+    visited_states.add(current_state)
+    successors = []
+
+    # Fill jug4
+    if jug4 < 4 and (4, jug3) not in visited_states:
+        successors.extend(water_jug_dfs((4, jug3), visited_states))
+
+    # Fill jug3
+    if jug3 < 3 and (jug4, 3) not in visited_states:
+        successors.extend(water_jug_dfs((jug4, 3), visited_states))
+
+    # Empty jug4
+    if jug4 > 0 and (0, jug3) not in visited_states:
+        successors.extend(water_jug_dfs((0, jug3), visited_states))
+
+    # Empty jug3
+    if jug3 > 0 and (jug4, 0) not in visited_states:
+        successors.extend(water_jug_dfs((jug4, 0), visited_states))
+
+    # Pour from jug4 to jug3
+    pour_amount = min(jug4, 3 - jug3)
+    if pour_amount > 0 and (jug4 - pour_amount, jug3 + pour_amount) not in visited_states:
+        successors.extend(water_jug_dfs((jug4 - pour_amount, jug3 + pour_amount), visited_states))
+
+    # Pour from jug3 to jug4
+    pour_amount = min(jug3, 4 - jug4)
+    if pour_amount > 0 and (jug4 + pour_amount, jug3 - pour_amount) not in visited_states:
+        successors.extend(water_jug_dfs((jug4 + pour_amount, jug3 - pour_amount), visited_states))
+
+    return [current_state] + successors
+
+def solve_water_jug_problem():
+    initial_state = (0, 0)
+    visited_states = set()
+
+    solution_path = water_jug_dfs(initial_state, visited_states)
+
+    if solution_path[-1] == (0, 2):
+        print("Solution found:")
+        for state in solution_path:
+            print(f"Jug 4: {state[0]} gallons, Jug 3: {state[1]} gallons")
+    else:
+        print("No solution found.")
+
+if __name__ == "__main__":
+    solve_water_jug_problem()

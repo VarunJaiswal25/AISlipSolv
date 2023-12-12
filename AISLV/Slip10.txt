@@ -1,0 +1,73 @@
+Q.1) Write Python program to implement crypt arithmetic problem 
+     TWO+TWO=FOUR
+
+
+
+from itertools import permutations
+
+def is_valid_assignment(assignment):
+    t, w, o, f, u, r = assignment
+    return t != 0 and f != 0 and 2 * (100 * t + 10 * w + o) == (1000 * f + 100 * o + 10 * u + r)
+
+def solve_cryptarithmetic_puzzle():
+    letters = ['T', 'W', 'O', 'F', 'U', 'R']
+    digit_permutations = permutations(range(10), len(letters))
+
+    for perm in digit_permutations:
+        assignment = dict(zip(letters, perm))
+        if is_valid_assignment(assignment):
+            print("Valid Assignment:")
+            print(f"T = {assignment['T']}")
+            print(f"W = {assignment['W']}")
+            print(f"O = {assignment['O']}")
+            print(f"F = {assignment['F']}")
+            print(f"U = {assignment['U']}")
+            print(f"R = {assignment['R']}")
+            print(f"TWO = {assignment['T']}{assignment['W']}{assignment['O']}")
+            print(f"FOUR = {assignment['F']}{assignment['O']}{assignment['U']}{assignment['R']}")
+            return
+
+    print("No solution found.")
+
+if __name__ == "__main__":
+    solve_cryptarithmetic_puzzle()
+
+
+Q.2) Write a Python program to implement Simple Chatbot.
+
+
+
+import random
+
+def simple_chatbot(user_input):
+    greetings = ["hello", "hi", "hey", "greetings", "howdy"]
+    farewells = ["goodbye", "bye", "see you", "farewell", "take care"]
+
+    user_input = user_input.lower()
+
+    if any(greeting in user_input for greeting in greetings):
+        return "Hello! How can I help you today?"
+
+    elif any(farewell in user_input for farewell in farewells):
+        return "Goodbye! Have a great day!"
+
+    elif "your name" in user_input:
+        return "I'm a simple chatbot."
+
+    elif "weather" in user_input:
+        return "I'm sorry, I don't have the ability to check the weather."
+
+    else:
+        return "I'm sorry, I didn't understand that."
+
+if __name__ == "__main__":
+    print("Simple Chatbot: Hello! Type 'bye' to exit.")
+    while True:
+        user_input = input("You: ")
+        
+        if user_input.lower() == 'bye':
+            print("Simple Chatbot: Goodbye! Have a great day!")
+            break
+
+        response = simple_chatbot(user_input)
+        print("Simple Chatbot:", response)

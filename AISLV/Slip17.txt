@@ -1,0 +1,111 @@
+Q.1) Python program that demonstrates the hill climbing algorithm to find the maximum of a 
+mathematical function.
+
+
+import math
+
+def objective_function(x):
+    # The function to maximize, for example, x^2
+    return -x**2
+
+def hill_climbing(initial_position, step_size, max_iterations):
+    current_position = initial_position
+
+    for iteration in range(max_iterations):
+        current_value = objective_function(current_position)
+
+        # Check the neighboring positions
+        next_position = current_position + step_size
+        next_value = objective_function(next_position)
+
+        # If the value at the neighboring position is greater, move to that position
+        if next_value > current_value:
+            current_position = next_position
+        else:
+            # Break if there is no improvement
+            break
+
+    return current_position, objective_function(current_position)
+
+if __name__ == "__main__":
+    initial_position = float(input("Enter the initial position: "))
+    step_size = float(input("Enter the step size: "))
+    max_iterations = int(input("Enter the maximum number of iterations: "))
+
+    max_position, max_value = hill_climbing(initial_position, step_size, max_iterations)
+
+    print(f"Maximum value found at position {max_position} with value {max_value}")
+
+
+
+
+Q.2) Write a Python program to implement A* algorithm. Refer the following graph as an Input for 
+the program.[ Start vertex is A and Goal Vertex is G]
+
+
+from queue import PriorityQueue
+
+# Define the graph as an adjacency list
+graph = {
+    'A': {'B': 3, 'C': 5},
+    'B': {'A': 3, 'D': 2, 'E': 6},
+    'C': {'A': 5, 'F': 7},
+    'D': {'B': 2},
+    'E': {'B': 6, 'G': 8},
+    'F': {'C': 7, 'G': 4},
+    'G': {'E': 8, 'F': 4}
+}
+
+# Heuristic function (for demonstration purposes)
+heuristic = {
+    'A': 8,
+    'B': 6,
+    'C': 6,
+    'D': 4,
+    'E': 3,
+    'F': 4,
+    'G': 0
+}
+
+def astar(start, goal):
+    priority_queue = PriorityQueue()
+    priority_queue.put((0, start))
+
+    # Cost from start to node
+    g_score = {vertex: float('infinity') for vertex in graph}
+    g_score[start] = 0
+
+    # Estimated total cost from start to goal through node
+    f_score = {vertex: float('infinity') for vertex in graph}
+    f_score[start] = heuristic[start]
+
+    while not priority_queue.empty():
+        current_cost, current_vertex = priority_queue.get()
+
+        if current_vertex == goal:
+            # Goal reached
+            return g_score[goal]
+
+        for neighbor, edge_cost in graph[current_vertex].items():
+            tentative_g_score = g_score[current_vertex] + edge_cost
+
+            if tentative_g_score < g_score[neighbor]:
+                # Update the g_score and f_score
+                g_score[neighbor] = tentative_g_score
+                f_score[neighbor] = tentative_g_score + heuristic[neighbor]
+                priority_queue.put((f_score[neighbor], neighbor))
+
+    # If the goal is not reachable
+    return float('infinity')
+
+if __name__ == "__main__":
+    start_vertex = 'A'
+    goal_vertex = 'G'
+
+    result = astar(start_vertex, goal_vertex)
+
+    if result == float('infinity'):
+        print(f"Goal '{goal_vertex}' is not reachable from the start vertex '{start_vertex}'.")
+    else:
+        print(f"Shortest path cost from '{start_vertex}' to '{goal_vertex}': {result}")
+

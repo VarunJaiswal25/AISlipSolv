@@ -1,0 +1,60 @@
+Q.1) Write a Program to Implement Tower of Hanoi using Python
+
+
+
+def tower_of_hanoi(n, source, target, auxiliary):
+    if n > 0:
+        # Move n-1 disks from source to auxiliary peg
+        tower_of_hanoi(n-1, source, auxiliary, target)
+
+        # Move the nth disk from source to target peg
+        print(f"Move disk {n} from {source} to {target}")
+
+        # Move the n-1 disks from auxiliary peg to target peg
+        tower_of_hanoi(n-1, auxiliary, target, source)
+
+# Example: To move 3 disks from peg 'A' to peg 'C' with the help of peg 'B'
+tower_of_hanoi(3, 'A', 'C', 'B')
+
+
+
+
+Q.2) Write a Python program for the following Cryptarithmetic problems
+SEND + MORE = MONEY
+
+from itertools import permutations
+
+def solve_cryptarithmetic(problem):
+    letters = set(char for word in problem for char in word)
+    if len(letters) > 10:
+        print("Invalid problem: Too many unique letters.")
+        return
+
+    for perm in permutations(range(10), len(letters)):
+        assignment = dict(zip(letters, perm))
+        if is_solution(problem, assignment):
+            print("Solution found:")
+            print_assignment(assignment, problem)
+            return
+
+    print("No solution found.")
+
+def is_solution(problem, assignment):
+    # Evaluate the expression with the given assignment
+    try:
+        send_value = sum(assignment[char] * (10 ** (len(word) - index - 1)) for index, char in enumerate(problem[0][::-1]))
+        more_value = sum(assignment[char] * (10 ** (len(word) - index - 1)) for index, char in enumerate(problem[1][::-1]))
+        money_value = sum(assignment[char] * (10 ** (len(word) - index - 1)) for index, char in enumerate(problem[2][::-1]))
+        return send_value + more_value == money_value
+    except KeyError:
+        return False
+
+def print_assignment(assignment, problem):
+    for word in problem:
+        print(" + ".join(str(assignment[char]) for char in word[::-1]), end=" ")
+        print("= " + str(sum(assignment[char] * (10 ** (len(word) - index - 1)) for index, char in enumerate(word[::-1]))))
+
+if __name__ == "__main__":
+    problem = ["SEND", "MORE", "MONEY"]
+    solve_cryptarithmetic(problem)
+

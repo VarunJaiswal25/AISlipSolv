@@ -1,0 +1,93 @@
+Q.1) Write a python program to generate Calendar for the given month and year?import calendar
+
+def generate_calendar():
+    # Get user input for the month and year
+    year = int(input("Enter the year (e.g., 2023): "))
+    month = int(input("Enter the month (1-12): "))
+
+    # Validate input
+    if not (1 <= month <= 12):
+        print("Invalid month input. Please enter a number between 1 and 12.")
+        return
+
+    # Generate the calendar
+    cal = calendar.monthcalendar(year, month)
+
+    # Display the calendar
+    print("\nCalendar:")
+    print(calendar.month_name[month], year)
+    print("Mo Tu We Th Fr Sa Su")
+
+    for week in cal:
+        week_str = ""
+        for day in week:
+            if day == 0:
+                week_str += "   "
+            else:
+                week_str += f"{day:2d} "
+        print(week_str)
+
+if __name__ == "__main__":
+    generate_calendar()
+
+
+
+Q.2)Write a Python program to simulate 4-Queens problem.
+
+
+def is_safe(board, row, col):
+    # Check if there is a queen in the same row
+    if any(board[row]):
+        return False
+
+    # Check if there is a queen in the same column
+    if any(board[i][col] for i in range(len(board))):
+        return False
+
+    # Check if there is a queen in the diagonal
+    for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
+        if board[i][j]:
+            return False
+
+    for i, j in zip(range(row, -1, -1), range(col, len(board))):
+        if board[i][j]:
+            return False
+
+    return True
+
+def solve_n_queens_util(board, row):
+    if row == len(board):
+        return [row[:] for row in board]
+
+    solutions = []
+
+    for col in range(len(board)):
+        if is_safe(board, row, col):
+            board[row][col] = 1
+            result = solve_n_queens_util(board, row + 1)
+            if result:
+                solutions.extend(result)
+            board[row][col] = 0
+
+    return solutions
+
+def solve_n_queens(n):
+    board = [[0] * n for _ in range(n)]
+    solutions = solve_n_queens_util(board, 0)
+    return solutions
+
+def print_solution(solution):
+    for row in solution:
+        print(" ".join("Q" if cell else "." for cell in row))
+    print()
+
+if __name__ == "__main__":
+    n = 4
+    solutions = solve_n_queens(n)
+
+    if solutions:
+        print(f"Found {len(solutions)} solutions for the {n}-Queens problem:\n")
+        for solution in solutions:
+            print_solution(solution)
+    else:
+        print(f"No solutions found for the {n}-Queens problem.")

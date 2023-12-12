@@ -1,0 +1,69 @@
+Q.1) Write a Program to Implement Tower of Hanoi using Python
+
+
+def tower_of_hanoi(n, source, target, auxiliary):
+    if n > 0:
+        # Move n-1 disks from source to auxiliary peg
+        tower_of_hanoi(n-1, source, auxiliary, target)
+
+        # Move the nth disk from source to target peg
+        print(f"Move disk {n} from {source} to {target}")
+
+        # Move the n-1 disks from auxiliary peg to target peg
+        tower_of_hanoi(n-1, auxiliary, target, source)
+
+# Example: To move 3 disks from peg 'A' to peg 'C' with the help of peg 'B'
+tower_of_hanoi(3, 'A', 'C', 'B')
+
+
+
+
+Q.2) Write a Python program to solve tic-tac-toe problem
+
+
+def print_board(board):
+    for row in board:
+        print(" | ".join(row))
+        print("-" * 5)
+
+def check_winner(board, player):
+    # Check rows and columns
+    for i in range(3):
+        if all(board[i][j] == player for j in range(3)) or all(board[j][i] == player for j in range(3)):
+            return True
+
+    # Check diagonals
+    if all(board[i][i] == player for i in range(3)) or all(board[i][2 - i] == player for i in range(3)):
+        return True
+
+    return False
+
+def is_board_full(board):
+    return all(all(cell != ' ' for cell in row) for row in board)
+
+def tic_tac_toe():
+    board = [[' ' for _ in range(3)] for _ in range(3)]
+    current_player = 'X'
+
+    while True:
+        print_board(board)
+        row = int(input(f"Player {current_player}, enter row (0, 1, or 2): "))
+        col = int(input(f"Player {current_player}, enter column (0, 1, or 2): "))
+
+        if board[row][col] == ' ':
+            board[row][col] = current_player
+            if check_winner(board, current_player):
+                print_board(board)
+                print(f"Player {current_player} wins!")
+                break
+            elif is_board_full(board):
+                print_board(board)
+                print("It's a draw!")
+                break
+            else:
+                current_player = 'O' if current_player == 'X' else 'X'
+        else:
+            print("Cell already taken. Try again.")
+
+if __name__ == "__main__":
+    tic_tac_toe()

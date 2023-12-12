@@ -1,0 +1,67 @@
+Q.1)Write a python program to remove punctuations from the given string?
+
+
+
+import string
+
+def remove_punctuation(input_string):
+    # Create a translation table to remove punctuation
+    translator = str.maketrans("", "", string.punctuation)
+
+    # Use translate method to remove punctuation
+    result_string = input_string.translate(translator)
+    return result_string
+
+# Example usage
+input_string = "Hello, World! This is an example string with punctuations!!!"
+output_string = remove_punctuation(input_string)
+
+print(f"Original String: {input_string}")
+print(f"String without Punctuation: {output_string}")
+
+
+
+
+Q.2)Write a Python program for the following Cryptarithmetic problems. 
+GO + TO = OUT
+
+
+from itertools import permutations
+
+def solve_cryptarithmetic(problem):
+    letters = set(char for word in problem for char in word)
+    if len(letters) > 10:
+        print("Invalid problem: Too many unique letters.")
+        return
+
+    for perm in permutations(range(10), len(letters)):
+        assignment = dict(zip(letters, perm))
+        if is_solution(problem, assignment):
+            print("Solution found:")
+            print_assignment(assignment, problem)
+            return
+
+    print("No solution found.")
+
+def is_solution(problem, assignment):
+    # Evaluate the expression with the given assignment
+    try:
+        go_value = sum(assignment[char] * (10 ** (len(word) - index - 1)) for index, char in enumerate(problem[0][::-1]))
+        to_value = sum(assignment[char] * (10 ** (len(word) - index - 1)) for index, char in enumerate(problem[1][::-1]))
+        out_value = sum(assignment[char] * (10 ** (len(word) - index - 1)) for index, char in enumerate(problem[2][::-1]))
+        return go_value + to_value == out_value
+    except KeyError:
+        return False
+
+def print_assignment(assignment, problem):
+    for word in problem:
+        print(" + ".join(str(assignment[char]) for char in word[::-1]), end=" ")
+        print("= " + str(sum(assignment[char] * (10 ** (len(word) - index - 1)) for index, char in enumerate(word[::-1]))))
+
+if __name__ == "__main__":
+    problem = ["GO", "TO", "OUT"]
+    solve_cryptarithmetic(problem)
+
+
+
+

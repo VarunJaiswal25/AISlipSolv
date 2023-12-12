@@ -1,0 +1,150 @@
+Q.1) Build a bot which provides all the information related to you in college 
+
+class CollegeBot:
+    def __init__(self):
+        self.college_info = {
+            "name": "My College",
+            "location": "City, Country",
+            "major": "Computer Science",
+            "year": "Senior",
+            "activities": ["Programming Club", "Student Council"],
+            "courses": ["Artificial Intelligence", "Data Structures", "Web Development"],
+            "favorite_spot": "Library",
+            "contact_hours": "Monday to Friday, 9 AM to 5 PM"
+        }
+
+    def get_info(self, query):
+        if query.lower() == 'all':
+            return self.college_info
+        elif query.lower() in self.college_info:
+            return {query: self.college_info[query.lower()]}
+        else:
+            return {"response": "I don't have information on that topic."}
+
+if __name__ == "__main__":
+    college_bot = CollegeBot()
+
+    print("College Bot: Hello! I'm your college information bot.")
+    print("College Bot: You can ask me about my college, major, activities, courses, favorite spot, and contact hours.")
+
+    while True:
+        user_query = input("You: ")
+
+        if user_query.lower() == 'exit':
+            print("College Bot: Goodbye!")
+            break
+
+        response = college_bot.get_info(user_query)
+        print("College Bot:", response)
+
+
+
+
+
+
+
+
+Q.2) Write a Python program to implement Mini-Max Algorithm.
+
+
+import math
+
+def minimax(board, depth, is_maximizing_player):
+    if depth == 0 or is_game_over(board):
+        return evaluate_board(board)
+
+    if is_maximizing_player:
+        max_eval = -math.inf
+        for move in get_possible_moves(board):
+            board[move] = 'X'
+            eval = minimax(board, depth - 1, False)
+            max_eval = max(max_eval, eval)
+            board[move] = ' '  # undo the move
+        return max_eval
+    else:
+        min_eval = math.inf
+        for move in get_possible_moves(board):
+            board[move] = 'O'
+            eval = minimax(board, depth - 1, True)
+            min_eval = min(min_eval, eval)
+            board[move] = ' '  # undo the move
+        return min_eval
+
+def get_possible_moves(board):
+    return [i for i, cell in enumerate(board) if cell == ' ']
+
+def is_game_over(board):
+    return ' ' not in board or has_winner(board, 'X') or has_winner(board, 'O')
+
+def evaluate_board(board):
+    if has_winner(board, 'X'):
+        return 1
+    elif has_winner(board, 'O'):
+        return -1
+    else:
+        return 0
+
+def has_winner(board, player):
+    # Check rows, columns, and diagonals for a winner
+    for i in range(3):
+        if all(board[i*3 + j] == player for j in range(3)) or \
+           all(board[j*3 + i] == player for j in range(3)):
+            return True
+    if all(board[i*3 + i] == player for i in range(3)) or \
+       all(board[i*3 + 2 - i] == player for i in range(3)):
+        return True
+    return False
+
+def find_best_move(board):
+    best_val = -math.inf
+    best_move = -1
+
+    for move in get_possible_moves(board):
+        board[move] = 'X'
+        move_val = minimax(board, 0, False)
+        board[move] = ' '  # undo the move
+
+        if move_val > best_val:
+            best_move = move
+            best_val = move_val
+
+    return best_move
+
+def print_board(board):
+    for i in range(3):
+        print(" | ".join(board[i*3:i*3+3]))
+        if i < 2:
+            print("---------")
+
+if __name__ == "__main__":
+    board = [' '] * 9
+
+    print("Initial Board:")
+    print_board(board)
+
+    while True:
+        user_move = int(input("Enter your move (1-9): ")) - 1
+        if board[user_move] == ' ':
+            board[user_move] = 'O'
+            print("\nYour Move:")
+            print_board(board)
+        else:
+            print("Invalid move. Try again.")
+            continue
+
+        if is_game_over(board):
+            break
+
+        print("\nComputer's Move:")
+        computer_move = find_best_move(board)
+        board[computer_move] = 'X'
+        print_board(board)
+
+        if is_game_over(board):
+            break
+
+    winner = 'X' if has_winner(board, 'X') else 'O'
+    if winner != ' ':
+        print(f"\n{winner} wins!")
+    else:
+        print("\nIt's a draw!")

@@ -1,0 +1,129 @@
+Q.1)Write a Program to Implement Monkey Banana Problem using Python 
+
+
+class MonkeyBananaProblem:
+    def __init__(self, grid):
+        self.grid = grid
+        self.rows = len(grid)
+        self.cols = len(grid[0])
+        self.monkey_position = (0, 0)
+        self.banana_position = None
+
+    def print_grid(self):
+        for row in self.grid:
+            print(" ".join(str(cell) for cell in row))
+        print()
+
+    def move_monkey(self, direction):
+        x, y = self.monkey_position
+
+        if direction == "up" and x > 0:
+            x -= 1
+        elif direction == "down" and x < self.rows - 1:
+            x += 1
+        elif direction == "left" and y > 0:
+            y -= 1
+        elif direction == "right" and y < self.cols - 1:
+            y += 1
+
+        self.monkey_position = (x, y)
+
+    def calculate_distance(self):
+        if self.monkey_position is not None and self.banana_position is not None:
+            monkey_x, monkey_y = self.monkey_position
+            banana_x, banana_y = self.banana_position
+            return abs(monkey_x - banana_x) + abs(monkey_y - banana_y)
+        else:
+            return None
+
+    def solve_problem(self):
+        self.print_grid()
+
+        while self.banana_position is None:
+            direction = input("Enter direction (up, down, left, right): ")
+            self.move_monkey(direction)
+
+            if self.grid[self.monkey_position[0]][self.monkey_position[1]] == "B":
+                self.banana_position = self.monkey_position
+                print("Monkey reached the banana!")
+
+            self.print_grid()
+
+        total_distance = self.calculate_distance()
+        print(f"Total distance traveled by the monkey: {total_distance} units")
+
+if __name__ == "__main__":
+    grid = [
+        ["M", ".", ".", ".", "."],
+        [".", ".", ".", ".", "."],
+        [".", ".", ".", ".", "."],
+        [".", ".", ".", ".", "."],
+        [".", ".", ".", ".", "B"]
+    ]
+
+    monkey_problem = MonkeyBananaProblem(grid)
+    monkey_problem.solve_problem()
+
+
+
+Q.2) Write a program to implement Iterative Deepening DFS algorithm.[ Goal Node =G]
+
+
+
+class Node:
+    def __init__(self, name, children=None):
+        self.name = name
+        self.children = children if children else []
+
+def iterative_deepening_dfs(root, goal):
+    depth = 0
+    while True:
+        result = depth_limited_dfs(root, goal, depth)
+        if result:
+            return result
+        depth += 1
+
+def depth_limited_dfs(node, goal, depth):
+    if depth == 0 and node.name == goal:
+        return [node.name]
+    
+    if depth > 0:
+        for child in node.children:
+            result = depth_limited_dfs(child, goal, depth - 1)
+            if result:
+                return [node.name] + result
+
+    return None
+
+if __name__ == "__main__":
+    # Create a tree structure
+    tree = Node('A', [
+        Node('B', [
+            Node('D', [
+                Node('H'),
+                Node('I')
+            ]),
+            Node('E', [
+                Node('J'),
+                Node('K')
+            ])
+        ]),
+        Node('C', [
+            Node('F', [
+                Node('L'),
+                Node('M')
+            ]),
+            Node('G')
+        ])
+    ])
+
+    goal_node = 'G'
+
+    result_path = iterative_deepening_dfs(tree, goal_node)
+
+    if result_path:
+        print(f"Goal node '{goal_node}' found using Iterative Deepening DFS:")
+        print(" -> ".join(result_path))
+    else:
+        print(f"Goal node '{goal_node}' not found.")
+

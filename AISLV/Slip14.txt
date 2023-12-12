@@ -1,0 +1,62 @@
+Q.1) Write a python program to sort the sentence in alphabetical order?
+
+def sort_sentence(sentence):
+    words = sentence.split()
+    sorted_words = sorted(words)
+    sorted_sentence = ' '.join(sorted_words)
+    return sorted_sentence
+
+if __name__ == "__main__":
+    input_sentence = input("Enter a sentence: ")
+    result = sort_sentence(input_sentence)
+    print("Sorted Sentence:", result)
+
+
+
+
+
+Q.2) Write a Python program to simulate n-Queens problem. 
+
+
+def is_safe(board, row, col, n):
+    # Check if there is a queen in the same column
+    for i in range(row):
+        if board[i] == col or \
+           board[i] - i == col - row or \
+           board[i] + i == col + row:
+            return False
+    return True
+
+def solve_n_queens_util(board, row, n, solutions):
+    if row == n:
+        solutions.append(board[:])  # Store a copy of the solution
+        return
+
+    for col in range(n):
+        if is_safe(board, row, col, n):
+            board[row] = col
+            solve_n_queens_util(board, row + 1, n, solutions)
+
+def solve_n_queens(n):
+    board = [-1] * n  # Initialize the board with no queens
+    solutions = []
+    solve_n_queens_util(board, 0, n, solutions)
+    return solutions
+
+def print_solution(solution):
+    for row in solution:
+        print("." * row + "Q" + "." * (len(solution) - row - 1))
+    print()
+
+if __name__ == "__main__":
+    n = int(input("Enter the value of n: "))
+
+    solutions = solve_n_queens(n)
+
+    if solutions:
+        print(f"\nFound {len(solutions)} solutions for the {n}-Queens problem:\n")
+        for i, solution in enumerate(solutions):
+            print(f"Solution {i + 1}:")
+            print_solution(solution)
+    else:
+        print(f"\nNo solutions found for the {n}-Queens problem.")
